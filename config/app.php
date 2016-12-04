@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Laravel',
+    'name' => 'SiBengkel',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,8 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
-
-        //
+        'Cornford\Googlmapper\MapperServiceProvider',
 
         /*
          * Application Service Providers...
@@ -226,6 +225,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        'Mapper' => 'Cornford\Googlmapper\Facades\MapperFacade',
     ],
 
 ];

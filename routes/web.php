@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('main');
+// });
+
+Route::get('/', 'MainController');
+// Route::get('admin', 'AdminController');
