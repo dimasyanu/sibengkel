@@ -22,11 +22,11 @@
 	</head>
 	<body>
 		<div id="sib-header-bar" class="col-md-12 col-sm-12 col-xs-12">
-			<button id="sib-sidebar-toggle" class="btn">
+			<a id="sib-sidebar-toggle" class="btn">
 				<span class="sib-sidebar-toggle-line"></span>
 				<span class="sib-sidebar-toggle-line"></span>
 				<span class="sib-sidebar-toggle-line"></span>
-			</button>
+			</a>
 		</div>
 		<div id="sib-map-container" class="col-md-12 col-sm-12 col-xs-12">
 			<div id="sib-map">{!! Mapper::render () !!}</div>

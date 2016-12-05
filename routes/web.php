@@ -11,9 +11,6 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('main');
-// });
-
 Route::get('/', 'MainController');
-// Route::get('admin', 'AdminController');
+Route::get('admin', 'AdminController@index');
+Route::get('admin/{menu}', 'AdminController@index');

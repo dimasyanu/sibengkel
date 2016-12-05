@@ -26,4 +26,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public static function getColumnList(){
+        $list = array(
+            'id', 
+            'name', 
+            'email'
+        );
+        return $list;
+    }
 }
