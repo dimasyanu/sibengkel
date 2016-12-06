@@ -11,6 +11,12 @@
 |
 */
 
-Route::get('/', 'MainController');
-Route::get('admin', 'AdminController@index');
-Route::get('admin/{menu}', 'AdminController@index');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
+
+Route::group( ['middleware' => 'auth' ], function() {
+	Route::get('/', 'MainController');
+	Route::get('admin', 'AdminController@index');
+	Route::get('admin/{menu}', 'AdminController@index');
+});

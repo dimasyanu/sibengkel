@@ -40,7 +40,7 @@ class AdminController extends Controller {
         $data['items'] = $items;
         $data['tables'] = $tables;
         $data['menu'] = $menu;
-        $data['menu_keys'] = $menuKeys;
+        $data['menu_lower'] = $menuKeys;
         $data['column_list'] = $columnList;
 
     	return View::make('tasks.index', $data);

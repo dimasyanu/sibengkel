@@ -24,8 +24,7 @@ class Admin extends Model {
     	$tables = array(
             'Categories',
             'Bengkel',
-            'Users',
-            'Nana'
+            'Users'
         );
         return $tables;
 	}
