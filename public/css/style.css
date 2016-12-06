@@ -21,6 +21,10 @@ html, body {
 #sib-header-bar {
 	background-color: #9e9e9e;
 }
+#sib-header-bar .container {
+	margin-left: 15px;
+	margin-right: 15px;
+}
 #sib-sidebar-toggle {
 	float: left;
 	padding-top: 13px;
