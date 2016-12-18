@@ -11,7 +11,7 @@ class CreateBengkelTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('bengkel', function (Blueprint $table) {
+        Schema::create('bengkels', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('categories');

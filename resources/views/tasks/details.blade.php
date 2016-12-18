@@ -1,4 +1,4 @@
-	<div class="modal fade" id="sib-modal-create" tabindex="-1" role="dialog" aria-labelledby="sib-modal-label">
+<div class="modal fade" id="sib-modal-details" tabindex="-1" role="dialog" aria-labelledby="sib-modal-label">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -9,21 +9,22 @@
                 <div class="modal-body">
                     <form id="modalForm" class="form-horizontal" name="modalForm">
 					@foreach($column_list as $colKey => $column)
-						@if($column != 'id')
 					    <div class="form-group">
-					        <label for="{{ $menu_lower[$key] }}" class="col-sm-2 control-label">{{ $column }}</label>
+                            <div class="col-sm-2">
+					           <label for="{{ $menu_lower[$key] }}" class="col-sm-2 control-label">{{ $column }}</label>
+                            </div>
 					        <div class="col-sm-10">
-					            <input class="form-control" id="new-{{ $menu_lower[$key] }}" placeholder="{{ $column }}" />
+                                @if(sizeof($items))
+                                    <label id="{{ $menu_lower[$key] }}-details" class="control-label">{{ $items[0]['original'][$column] }}</label>
+                                @endif
 					        </div>
 					    </div>
-					    @endif
 				    @endforeach
 				    </form>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="sib-btn-save" type="button" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>

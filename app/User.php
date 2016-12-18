@@ -29,9 +29,9 @@ class User extends Authenticatable
 
     public static function getColumnList(){
         $list = array(
-            'id', 
             'name', 
-            'email'
+            'email',
+            'id'
         );
         return $list;
     }

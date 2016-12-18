@@ -26,8 +26,10 @@ html, body {
 	margin-right: 15px;
 }
 #sib-sidebar-toggle {
+	margin: 5px;
 	float: left;
 	padding-top: 13px;
+	padding-bottom: 13px;
 	border-radius: 20px;
 	border: 0;
 	width: 40px;

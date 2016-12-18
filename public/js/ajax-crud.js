@@ -2,9 +2,25 @@ $(document).ready(function() {
 	
 	var url = "/sibengkel/public/admin";
 
+    //display modal for details
+    $('.sib-btn-details').click(function(data) {
+        $item_id = $(this).data('id');
+        $currentMenu = $('#current-menu').val();
+        
+        $.get(url + '/' + $currentMenu, function(data) {
+            $('#item_id').val(data.id);
+            $('#item').val(data.task);
+            $('#description').val(data.description);
+            $('#btn-save').val("update");
+
+            $("#sib-modal-details").modal('show');
+        })
+    });
+
 	//display modal form for task editing
 	$('.sib-btn-edit').click(function(data) {
 		$item_id = $(this).data('id');
+        console.log($item_id);
         $currentMenu = $('#current-menu').val();
         
 		$.get(url + '/' + $currentMenu, function(data) {
@@ -13,15 +29,19 @@ $(document).ready(function() {
 			$('#description').val(data.description);
 			$('#btn-save').val("update");
 
-			$("#sib-modal").modal('show');
+			$("#sib-modal-edit").modal('show');
 		})
 	});
 
 	//display modal form for creating new task
-    $('#sib-btn-add').click(function(){
-        $('#sib-btn-save').val("add");
-        $('#modalForm').trigger("reset");
-        $('#sib-modal').modal('show');
+    $('#sib-btn-create').click(function(){
+        $currentMenu = $('#current-menu').val();
+        console.log($currentMenu);
+        $.get(url + '/' + $currentMenu, function(data) {
+            $('#sib-btn-save').val("create");
+            $('#modalForm').trigger("reset");
+            $('#sib-modal-create').modal('show');
+        })
     });
 
     //delete task and remove it from list
@@ -44,7 +64,8 @@ $(document).ready(function() {
     });
 
     //create new task / update existing task
-    $("#btn-save").click(function (e) {
+    $("#sib-btn-save").click(function (e) {
+        console.log("Save");
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')

@@ -81,7 +81,7 @@ class AdminController extends Controller {
      * @return Response
      */
     public function edit($id) {
-        //
+        
     }
 
     /**
