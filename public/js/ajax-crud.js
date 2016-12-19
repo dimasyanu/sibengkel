@@ -1,124 +1,159 @@
 $(document).ready(function() {
-	
-	var url = "/sibengkel/public/admin";
 
+    jQuery.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        }
+    });
+
+	var url = "/sibengkel/public/admin";
+    $currentMenu = $('#current-menu').val();
+    var my_url = url + '/' + $currentMenu;
+    
     //display modal for details
     $('.sib-btn-details').click(function(data) {
-        $item_id = $(this).data('id');
-        $currentMenu = $('#current-menu').val();
-        
-        $.get(url + '/' + $currentMenu, function(data) {
-            $('#item_id').val(data.id);
-            $('#item').val(data.task);
-            $('#description').val(data.description);
-            $('#btn-save').val("update");
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
 
-            $("#sib-modal-details").modal('show');
-        })
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.details);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').css('display', 'none');
+                $('#sib-modal-title').text($action);
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
     });
 
 	//display modal form for task editing
 	$('.sib-btn-edit').click(function(data) {
-		$item_id = $(this).data('id');
-        console.log($item_id);
-        $currentMenu = $('#current-menu').val();
+		$item_id    = $(this).data('id');
+        $action     = $(this).data('action');
         
-		$.get(url + '/' + $currentMenu, function(data) {
-			$('#item_id').val(data.id);
-			$('#item').val(data.task);
-			$('#description').val(data.description);
-			$('#btn-save').val("update");
-
-			$("#sib-modal-edit").modal('show');
-		})
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.details);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').css('display', 'inline');
+                $('#sib-modal-title').text($action);
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
 	});
 
 	//display modal form for creating new task
     $('#sib-btn-create').click(function(){
-        $currentMenu = $('#current-menu').val();
-        console.log($currentMenu);
-        $.get(url + '/' + $currentMenu, function(data) {
-            $('#sib-btn-save').val("create");
-            $('#modalForm').trigger("reset");
-            $('#sib-modal-create').modal('show');
-        })
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+        
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.form);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').css('display', 'inline');
+                $('#sib-modal-title').text($action);
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
     });
 
     //delete task and remove it from list
     $('.sib-btn-delete').click(function(){
-        var item_id = $(this).val();
-
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+        
         $.ajax({
-
-            type: "DELETE",
-            url: url + '/' + item_id,
-            success: function (data) {
-                console.log(data);
-
-                $("#item" + item_id).remove();
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.alert);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').html('Confirm');
+                $('#sib-btn-close').html('Cancel');
+                $('#sib-modal-title').text($action);
+                $('#sib-modal').modal('show');
             },
-            error: function (data) {
-                console.log('Error:', data);
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
             }
         });
     });
 
     //create new task / update existing task
     $("#sib-btn-save").click(function (e) {
-        console.log("Save");
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-            }
-        })
+        // console.log("Save");
 
         e.preventDefault(); 
 
-        var formData = {
-            task: $('#task').val(),
-            description: $('#description').val(),
+        var columns = $('#columns').val().split(',');
+        var formData = [];
+        for (var i = 0; i < columns.length; i++) {
+            formData[columns[i]] = $('.input-' + columns[i]).val();
         }
+
+        formData['_token'] = $('meta[name="_token"]').attr('content');
+
+        console.log('formData : ' + formData['_token']);
+
+        // var formData = {
+        //     task: $('#task').val(),
+        //     description: $('#description').val(),
+        // }
 
         //used to determine the http verb to use [add=POST], [update=PUT]
         var state = $('#btn-save').val();
 
         var type = "POST"; //for creating new resource
-        var task_id = $('#task_id').val();;
-        var my_url = url;
+        var task_id = $('#task_id').val();
 
         if (state == "update"){
             type = "PUT"; //for updating existing resource
             my_url += '/' + task_id;
         }
-
-        console.log(formData);
-
+        
         $.ajax({
-
             type: type,
             url: my_url,
             data: formData,
             dataType: 'json',
-            success: function (data) {
-                console.log(data);
+            success: function(res) {
+                console.log("Success");
+                $str = '<pre><?php echo "ananan"; ?></pre>';
 
-                var task = '<tr id="task' + data.id + '"><td>' + data.id + '</td><td>' + data.task + '</td><td>' + data.description + '</td><td>' + data.created_at + '</td>';
-                task += '<td><button class="btn btn-warning btn-xs btn-detail open-modal" value="' + data.id + '">Edit</button>';
-                task += '<button class="btn btn-danger btn-xs btn-delete delete-task" value="' + data.id + '">Delete</button></td></tr>';
-
-                if (state == "add"){ //if user added a new record
-                    $('#tasks-list').append(task);
-                }else{ //if user updated an existing record
-
-                    $("#task" + task_id).replaceWith( task );
-                }
+                $('#sib-worksheet').html($str);
+                // $('#warung-plain').load("/warung_plain/{category}");
 
                 $('#frmTasks').trigger("reset");
-
                 $('#myModal').modal('hide')
             },
-            error: function (data) {
-                console.log('Error:', data);
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
             }
         });
     });

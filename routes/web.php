@@ -19,4 +19,6 @@ Route::group( ['middleware' => 'auth' ], function() {
 	Route::get('/', 'MainController');
 	Route::get('admin', 'AdminController@index');
 	Route::get('admin/{menu}', 'AdminController@index');
+	Route::get('admin/{menu}/{action}/{id}', 'AdminController@crud');
+	Route::post('admin/{menu}', 'AdminController@index');
 });

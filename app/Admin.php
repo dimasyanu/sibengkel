@@ -8,10 +8,25 @@ class Admin extends Model {
 	public static function getData($menu) {
 		switch($menu){
             case 'categories':
-                $items = Categories::all();
+                $items = Categories::select(Categories::getColumnList())->get();
                 break;
             case 'users':
                 $items = User::select(User::getColumnList())->get();
+                break;
+            case 'bengkel':
+                $items = Bengkel::all();
+                break;
+        }
+        return $items;
+    }
+
+    public static function getDetails($menu = 'bengkel', $id) {
+        switch($menu){
+            case 'categories':
+                $items = Categories::all();
+                break;
+            case 'users':
+                $items = User::select(User::getColumnList())->where('id', $id)->get();
                 break;
             case 'bengkel':
                 $items = Bengkel::all();

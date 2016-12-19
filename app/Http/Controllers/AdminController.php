@@ -20,18 +20,17 @@ class AdminController extends Controller {
      *
      * @return Response
      */
-    public function index($menu = 'bengkel') {
-        return $this->showIndex($menu);
+
+    public function __construct() {
+
     }
-    public function showIndex($menu) {
 
-        $items = Admin::getData($menu);
-
-        $tables = Admin::getTableList($menu);
-        
+    public function index(Request $request, $menu = 'bengkel') {
+        $items      = Admin::getData($menu);
+        $tables     = Admin::getTableList($menu);
         $columnList = Admin::getColumnList($menu);
+        $menuKeys   = array();
 
-        $menuKeys = array();
         foreach ($tables as $key => $table) {
             array_push($menuKeys, strtolower($table));
         }
@@ -43,7 +42,34 @@ class AdminController extends Controller {
         $data['menu_lower'] = $menuKeys;
         $data['column_list'] = $columnList;
 
-    	return View::make('tasks.index', $data);
+        if ($request->isMethod('get'))      return $this->loadIndex($menu, $data);
+        else if($request->isMethod('post')) return $this->reloadIndex($menu, $data);
+        else                                return View::make('admin', $data);
+    }
+    public function loadIndex($menu, $data) {
+        return View::make('admin', $data);
+    }
+
+    public function reloadIndex($menu, $data) {
+        $worksheet = View::make('tasks/index', $data)->render();
+        return response()->json(array('worksheet' => $worksheet), 200);
+    }
+
+
+    public function crud(Request $request, $menu = 'bengkel', $action, $id) {
+        if($action == 'create') {
+            if($request->isMethod('post'))  return $this->store(); 
+            else                            return $this->create($menu);
+        }
+        else if($action == 'edit') {
+            if($request->isMethod('post'))  return $this->update(); 
+            else                            return $this->edit($menu, $id);
+        }
+        else if($action == 'delete') {
+            if($request->isMethod('post'))  return $this->destroy(); 
+            else                            return $this->destroyAlert($menu, $id);
+        }
+        else                                return $this->show($menu, $id);
     }
 
     /**
@@ -51,8 +77,21 @@ class AdminController extends Controller {
      *
      * @return Response
      */
-    public function create() {
-        //
+    public function create($menu) {
+        $tables     = Admin::getTableList($menu);
+        $columnList = Admin::getColumnList($menu);
+        $menuKeys   = array();
+
+        foreach ($tables as $key => $table) 
+            array_push($menuKeys, strtolower($table));
+
+        $data = array();
+        $data['menu_lower']     = $menuKeys;
+        $data['column_list']    = $columnList;
+
+        $form   = View::make('tasks/create', $data)->render();
+        $footer = View::make('tasks/modal_footer/footer_create')->render();
+        return response()->json(array('form'=> $form, 'footer'=>$footer), 200);
     }
 
     /**
@@ -70,8 +109,23 @@ class AdminController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function show($id) {
-        //
+    public function show($menu = 'bengkel', $id) {
+        $items      = Admin::getDetails($menu, $id);
+        $tables     = Admin::getTableList($menu);
+        $columnList = Admin::getColumnList($menu);
+        $menuKeys   = array();
+
+        foreach ($tables as $key => $table) 
+            array_push($menuKeys, strtolower($table));
+
+        $data = array();
+        $data['menu_lower']     = $menuKeys;
+        $data['column_list']    = $columnList;
+        $data['items']          = $items;
+
+        $details = View::make('tasks/details', $data)->render();
+        $footer = View::make('tasks/modal_footer/footer_details')->render();
+        return response()->json(array('details'=> $details, 'footer' => $footer), 200);
     }
 
     /**
@@ -80,8 +134,23 @@ class AdminController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id) {
-        
+    public function edit($menu = 'bengkel', $id) {
+        $items      = Admin::getDetails($menu, $id);
+        $tables     = Admin::getTableList($menu);
+        $columnList = Admin::getColumnList($menu);
+        $menuKeys   = array();
+
+        foreach ($tables as $key => $table) 
+            array_push($menuKeys, strtolower($table));
+
+        $data = array();
+        $data['menu_lower']     = $menuKeys;
+        $data['column_list']    = $columnList;
+        $data['items']          = $items;
+
+        $details = View::make('tasks/edit', $data)->render();
+        $footer = View::make('tasks/modal_footer/footer_edit')->render();
+        return response()->json(array('details'=> $details, 'footer' => $footer), 200);
     }
 
     /**
@@ -92,6 +161,20 @@ class AdminController extends Controller {
      */
     public function update($id) {
         //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroyAlert($menu, $id) {
+        $items          = Admin::getDetails($menu, $id);
+        $data['item']  = $items;
+        $alert        = View::make('tasks/delete', $data)->render();
+        $footer = View::make('tasks/modal_footer/footer_delete')->render();
+        return response()->json(array('alert'=> $alert, 'footer' => $footer), 200);
     }
 
     /**

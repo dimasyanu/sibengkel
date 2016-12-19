@@ -1,0 +1,1 @@
+Delete <strong>{{ $item[0]['original']['name'] }}</strong> permanently?
