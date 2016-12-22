@@ -63,7 +63,7 @@
 
 <script>
 $(document).ready(function() {
-    jQuery.ajaxSetup({
+    $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
         }
@@ -131,11 +131,15 @@ $(document).ready(function() {
             type : 'GET',
             url: my_url + '/' + $action + '/' + $item_id,
             success: function(data) {
-                $('#sib-modal-body').html(data.form);
-                $('#sib-modal-footer').html(data.footer);
-                $('#sib-btn-save').css('display', 'inline');
-                $('#sib-modal-title').text('Create');
-                $('#sib-modal').modal('show');
+                if(data.menu == 'bengkel')
+                    $('#sib-worksheet').html(data.form);
+                else{
+                    $('#sib-modal-body').html(data.form);
+                    $('#sib-modal-footer').html(data.footer);
+                    $('#sib-btn-save').css('display', 'inline');
+                    $('#sib-modal-title').text('Create');
+                    $('#sib-modal').modal('show');
+                }
             },
             error: function(xhr, status, error) {
                 console.log('xhr : ' + xhr);

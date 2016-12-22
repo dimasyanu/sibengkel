@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Bengkel;
 use App\Category;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 
 class BengkelController extends Controller {
 
@@ -58,16 +59,20 @@ class BengkelController extends Controller {
 
 	public function create() {
 
+		$categories = Category::select('id', 'name', 'icon')->get();
+		
 		$data 					= array();
+		$data['action']         = 'create';
+		$data['action_title']	= 'Create';
 		$data['column_list']    = $this->getCollumnList();
 		$data['id']             = 0;
 		$data['menu']           = 'bengkel';
 		$data['bengkels']		= Bengkel::select($this->getCollumnList())->get();
+		$data['categories']		= $categories;
 
 
-		$form   = View::make('tasks/create', $data)->render();
-		$footer = View::make('tasks/modal_footer/footer_create')->render();
-		return response()->json(array('form'=> $form, 'footer'=>$footer), 200);
+		$form   = View::make('tasks/input_bengkel', $data)->render();
+		return response()->json(array('form'=> $form, 'menu' => 'bengkel'), 200);
 	}
 
 	public function store(Request $request) {
@@ -88,7 +93,7 @@ class BengkelController extends Controller {
 						->where('id', '=', $id)->get();
 
 		$categories = Category::select('id', 'name', 'icon')->get();
-		$cat_icon = Category::select('icon')->where('id', '=', $id)->get();
+		$cat_icon = Category::select('icon')->where('id', '=', $item[0]['original']['cat_id'])->get();
 
 		$data					= array();
 		$data['column_list']    = $this->getCollumnList();
@@ -98,10 +103,11 @@ class BengkelController extends Controller {
 		$data['categories']		= $categories;
 		$data['cat_icon']		= $cat_icon[0]['original']['icon'];
 		$data['action_title']	= 'Edit';
+		$data['action']			= 'edit';
 		$data['name']			= $item['0']['original']['name'];
 		$data['url']			= $url;
 
-		$details = View::make('tasks/create_bengkel', $data)->render();
+		$details = View::make('tasks/input_bengkel', $data)->render();
 		return response()->json(array('details'=> $details, 'menu' => 'bengkel'), 200);
 	}
 
