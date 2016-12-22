@@ -10,7 +10,10 @@
         var formData = {};
         formData['_token'] = $('meta[name="_token"]').attr('content');
         for (var i = 0; i < columns.length; i++) {
-            formData[columns[i]] = $('#edit-' + $('#current-menu').val() + '-' + columns[i]).val();
+            if(columns[i] == 'icon')
+                formData['icon'] = $('.pick-icon.selected img').data('icon');
+            else
+                formData[columns[i]] = $('#edit-' + $('#current-menu').val() + '-' + columns[i]).val();
         }
         var url = "/sibengkel/public/admin";
 		$currentMenu = $('#current-menu').val();

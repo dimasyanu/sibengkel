@@ -78,6 +78,12 @@ body {
 	padding: 0;
 	margin: 0;
 }
+#sib-admin-table {
+	background-color: white;
+}
+#sib-admin-table thead{
+	font-weight: 600;
+}
 .sib-btn-details {
 	padding: 8px;
 	width: 40px;
@@ -133,4 +139,13 @@ body {
 }
 .beng-actions:hover {
 	color: #333;
+}
+.pick-icon {
+	padding: 0;
+	border: 3px solid;
+	border-color: transparent;
+    border-radius: 5px;
+}
+.pick-icon.selected{
+	border-color: #2196F3;
 }

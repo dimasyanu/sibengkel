@@ -6,14 +6,14 @@
         @if (Session::has('message'))
             <div class="alert alert-info">{{ Session::get('message') }}</div>
         @endif
-        <table class="table table-striped table-bordered">
+        <table id="sib-admin-table" class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <td class="text-center">No.</td>
+                    <td class="text-center">NO.</td>
                     @foreach($column_list as $colKey => $column)
-                        <td class="{{ $column }}">{{ $column }}</td>
+                        <td class="{{ $column }}">{{ strtoupper($column) }}</td>
                     @endforeach
-                    <td>actions</td>
+                    <td>ACTIONS</td>
                 </tr>
             </thead>
             <tbody>
