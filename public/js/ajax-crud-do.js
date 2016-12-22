@@ -1,9 +1,5 @@
-<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-<button id="btn-edit-save" type="button" class="btn btn-primary">Save Changes</button>
-
-<script>
-	$("#btn-edit-save").click(function (e) {
-
+$(document).ready(function() {
+    $("#btn-edit-save").click(function (e) {
         e.preventDefault(); 
 
         var columns = $('#columns').val().split(',');
@@ -16,7 +12,7 @@
 		$currentMenu = $('#current-menu').val();
 		var my_url = url + '/' + $currentMenu + '/edit';
         $task_id = $('#taskId').val();
-        console.log(formData);
+        
         $.ajax({
             type: 'post',
             url: my_url + '/' + $task_id,
@@ -33,4 +29,4 @@
             }
         });
     });
-</script>
+});

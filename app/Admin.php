@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Admin extends Model {
 	public static function getData($menu) {
@@ -20,16 +21,31 @@ class Admin extends Model {
         return $items;
     }
 
+    public static function doCreate($menu = 'bengkel', $data) {
+        if($menu == 'bengkel') $menu = 'bengkels';
+        DB::table($menu)->insert($data);
+    }
+
+    public static function doUpdate($menu = 'bengkel', $id, $data) {
+        if($menu == 'bengkel') $menu = 'bengkels';
+        DB::table($menu)->where('id', $id)->update($data);
+    }
+
+    public static function doDelete($menu = 'bengkel', $id) {
+        if($menu == 'bengkel') $menu = 'bengkels';
+        DB::table($menu)->where('id', $id)->delete();
+    }
+
     public static function getDetails($menu = 'bengkel', $id) {
         switch($menu){
             case 'categories':
-                $items = Categories::all();
+                $items = Categories::select(Categories::getColumnList())->where('id', '=', $id)->get();
                 break;
             case 'users':
-                $items = User::select(User::getColumnList())->where('id', $id)->get();
+                $items = User::select(User::getColumnList())->where('id', '=', $id)->get();
                 break;
             case 'bengkel':
-                $items = Bengkel::all();
+                $items = Bengkel::select(Bengkel::getColumnList())->where('id', '=', $id)->get();
                 break;
         }
         return $items;

@@ -42,12 +42,11 @@
     <div id="sib-container">
         <div id="sib-worksheet" class="col-md-9 col-md-offset-3">
         	<!-- Data table goes here -->
-            @include('tasks/index')
         </div>
         <div id="sib-sidebar" class="col-md-3">
             <div class="sib-menu-list list-group">
-                @foreach($tables as $key => $table)
-                    <a class="sib-menu-item list-group-item <?php if(strtolower($table) == $menu) echo 'active'; ?>" href="{{ URL::to('admin') }}/{{ $menu_lower[$key] }}">{{ $table }}</a>
+                @foreach($menus as $key => $menu)
+                    <a id="{{ strtolower($menu) }}" class="sib-menu-item list-group-item <?php if(strtolower($menu) == $curr_menu) echo 'active'; ?>" href="#">{{ $menu }}</a>
                 @endforeach
             </div>
         </div>
@@ -55,7 +54,7 @@
 
     <!--///////////////////////////////- Modal -///////////////////////////////-->
     <!-- ADD -->
-        <div class="modal fade" id="sib-modal" tabindex="-1" role="dialog" aria-labelledby="sib-modal-label">
+    <div class="modal fade" id="sib-modal" tabindex="-1" role="dialog" aria-labelledby="sib-modal-label">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header text-center">
@@ -72,16 +71,49 @@
             </div>
         </div>
     </div>
-    <input type="hidden" id="current-menu" name="current-menu" value="{{ $menu }}">
-    <?php 
-    	$columns = '';
-    	foreach ($column_list as $key => $column) {
-    		if($column != 'id') $columns .= (($columns == "" ? '':',') . $column); 
-    	}
-    ?>
-    <input type="hidden" id="columns" name="columns" value="{{ $columns }}">
+    <input type="hidden" id="current-menu" name="current-menu" value="{{ $curr_menu }}">
 
-    <script src="{{ asset('js/ajax-crud.js') }}"></script>
+    <script src="{{ asset('js/ajax-crud-view.js') }}"></script>
+    <script src="{{ asset('js/ajax-crud-do.js') }}"></script>
     <meta name="_token" content="{!! csrf_token() !!}" />
 </body>
 </html>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var url = "/sibengkel/public/admin";
+        $currentMenu = $('#current-menu').val();
+        var my_url = url + '/' + $currentMenu;
+
+        $('.sib-menu-item').each(function() {
+            $(this).click(function() {
+                $('.sib-menu-item').each(function() {
+                    if($(this).hasClass('active'))
+                        $(this).removeClass('active');
+                });
+
+                $(this).addClass('active');
+                loadWorksheet(url + '/' + $(this).attr('id'));
+                $('#current-menu').val($(this).attr('id'));
+            });
+        });
+
+        loadWorksheet(my_url);
+
+        function loadWorksheet(my_url) {
+            $.ajax({
+                type: 'get',
+                url: my_url,
+                success: function(data) {
+                    $('#sib-worksheet').html(data.worksheet);
+                    $('#sib-modal').modal('hide')
+                },
+                error: function(xhr, status, error) {
+                    console.log('xhr : ' + xhr);
+                    console.log('status : ' + status);
+                    console.log('error : ' + error);
+                }
+            });
+        }
+    });
+</script>>

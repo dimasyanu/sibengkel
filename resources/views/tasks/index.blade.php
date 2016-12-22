@@ -1,5 +1,4 @@
 
-    
     <div class="container">
         <h1>All {{ $menu }}</h1>
         <a id="sib-btn-create" class="btn" data-id="0" data-toggle="modal" data-target="#sib-modal-create" data-action="create"><i class="material-icons">add</i></a>
@@ -24,7 +23,7 @@
                     <tr>
                         <td class="text-center"><?php echo $itemCount++; ?></td>
                         @foreach($item['original'] as $infoKey => $info)
-                            @if($infoKey != 'id')
+                            @if($infoKey != 'id' && $infoKey != 'created_at' && $infoKey != 'updated_at')
                                 <td>{{ $info }}</td>
                             @endif
                         @endforeach
@@ -54,3 +53,120 @@
             </tbody>
         </table>
     </div>
+    <?php 
+        $columns = '';
+        foreach ($column_list as $key => $column) {
+         if($column != 'id') $columns .= (($columns == "" ? '':',') . $column); 
+        }
+    ?>
+    <input type="hidden" id="columns" name="columns" value="{{ $columns }}">
+
+<script>
+$(document).ready(function() {
+    jQuery.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        }
+    });
+
+    var url = "/sibengkel/public/admin";
+    var currentMenu = $('#current-menu').val();
+    var my_url = url + '/' + currentMenu;
+    
+    //display modal for details
+    $('.sib-btn-details').click(function(data) {
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+
+        $.ajax({
+            type : 'get',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.details);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').css('display', 'none');
+                $('#sib-modal-title').text('Details');
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
+    });
+
+    //display modal form for task editing
+    $('.sib-btn-edit').click(function(data) {
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+        
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                if(data.menu == 'bengkel')
+                    $('#sib-worksheet').html(data.details);
+                else{
+                    $('#sib-modal-body').html(data.details);
+                    $('#sib-modal-footer').html(data.footer);
+                    $('#sib-modal-title').text('Edit');
+                    $('#sib-modal').modal('show');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
+    });
+
+    //display modal form for creating new task
+    $('#sib-btn-create').click(function(){
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+        
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.form);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').css('display', 'inline');
+                $('#sib-modal-title').text('Create');
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
+    });
+
+    //delete task and remove it from list
+    $('.sib-btn-delete').click(function(){
+        $item_id    = $(this).data('id');
+        $action     = $(this).data('action');
+        
+        $.ajax({
+            type : 'GET',
+            url: my_url + '/' + $action + '/' + $item_id,
+            success: function(data) {
+                $('#sib-modal-body').html(data.alert);
+                $('#sib-modal-footer').html(data.footer);
+                $('#sib-btn-save').html('Confirm');
+                $('#sib-btn-close').html('Cancel');
+                $('#sib-modal-title').text('Delete');
+                $('#sib-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log('xhr : ' + xhr);
+                console.log('status : ' + status);
+                console.log('error : ' + error);
+            }
+        });
+    });
+});
+</script>
