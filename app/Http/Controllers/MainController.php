@@ -19,7 +19,7 @@ class MainController extends Controller {
      */
     public function __invoke(){
         $bengkels   = Bengkel::join('categories', 'cat_id', '=', 'categories.id')
-                    ->select('bengkels.id', 'bengkels.name', 'bengkels.description','bengkels.start_hour', 'bengkels.end_hour','lat', 'lng', 'categories.alias')->get();
+                    ->select('bengkels.id', 'bengkels.name', 'bengkels.description','bengkels.start_hour', 'bengkels.end_hour','lat', 'lng', 'categories.name as catName','categories.alias')->get();
         $icons      = Category::select('alias', 'icon')->get();
         $service_list   = Service::select('id', 'icon')->get();
 

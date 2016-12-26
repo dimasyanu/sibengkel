@@ -131,7 +131,11 @@
 					var popupContent = '<div id="content">'+
 						'<div class="col-sm-12 text-center"><h3 id="firstHeading">'+ 	
 							<?php echo '\'' . $bengkel['name'] . '\''; ?> + 
-						'</h3></div>'+
+							'</h3>' +
+							'<h4>(' +
+								'<?php echo $bengkel['catName']; ?>' +
+							')</h4>' +
+						'</div>'+
 						'<div class="col-sm-6">' +
 							'<p>' + '<?php echo $bengkel['description']; ?>' + '</p>' +
 							'<br><p>Buka <br>' + '<?php echo $bengkel['start_hour'] . ' - ' . $bengkel['end_hour']; ?>' + '</p>' +
