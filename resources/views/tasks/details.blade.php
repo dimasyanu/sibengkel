@@ -1,5 +1,5 @@
 <form id="modalForm" class="form-horizontal" name="modalForm">
-@foreach($column_list as $colKey => $column)
+@foreach($item[0]['original'] as $column => $value)
     <div class="form-group">
         <div class="col-sm-2">
            <label class="col-sm-2 control-label">{{ $column }}</label>

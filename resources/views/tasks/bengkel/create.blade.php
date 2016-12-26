@@ -1,42 +1,21 @@
-    <div class="container beng-container">
-        <input type="hidden" id="cat-action" name="cat-action" value="{{ $action }}" />
+    <div class="container beng-container">  
         <div id="beng-action-box">
-            @if($action == 'create')
-                <h1>{{ $action_title }} new bengkel</h1>
-            @else
-                <h1>{{ $action_title }} {{ $name }}</h1>
-            @endif
+            <h1>Create new bengkel</h1>
             <label class="beng-actions" id="beng-btn-save"  data-toggle="tooltip" data-placement="bottom" title="Save">
                 <i class="material-icons">check</i>
             </label>
-            <label class="beng-actions" id="beng-btn-cancel"  data-toggle="tooltip" data-placement="bottom" title="Cancel {{ $action_title }}">
+            <label class="beng-actions" id="beng-btn-cancel"  data-toggle="tooltip" data-placement="bottom" title="Cancel">
                 <i class="material-icons">clear</i>
             </label>
         </div>
 
         <div class="col-md-6" id="beng-input-sheet">
-            @if($action == 'create')
-                <input type="hidden" id="cat-id" value="" />
-            @else
-                <input type="hidden" id="cat-id" value="{{ $item[0]['original']['cat_id'] }}" />
-            @endif
+            <input type="hidden" id="cat-id" value="" />
             <form id="bengkel-form" class="form-horizontal" method="post">
-                @if($action != 'create')
-                    <div class="form-group">
-                        <label for="text-id" class="col-md-3 col-sm-2 control-label">Id</label>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control text-center" disabled id="text-id" placeholder="Id" value="{{ $id }}" />
-                        </div>
-                    </div>
-                @endif
                 <div class="form-group">
                     <label for="input-name" class="col-md-3 col-sm-2 control-label">Name</label>
                     <div class="col-sm-6">
-                        @if($action == 'create')
-                            <input type="text" class="form-control" id="input-name" placeholder="Name" value="" />
-                        @else
-                            <input type="text" class="form-control" id="input-name" placeholder="Name" value="{{ $item[0]['original']['name'] }}" />
-                        @endif
+                        <input type="text" class="form-control" id="input-name" placeholder="Name" value="" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -52,44 +31,44 @@
                         </select>
                     </div>
                     <div class="col-sm-3">
-                        @if($action == 'create')
-                            <img id="cat-icon-preview" src="" />
-                        @else
-                            <img id="cat-icon-preview" src="{{ $iconDir.'/'.$cat_icon }}" />
-                        @endif
+                        <img id="cat-icon-preview" src="" />
                     </div>
                     <input type="hidden" id="cat-icons-dir" name="cat-icons-dir" value="{{ $iconDir }}" />
                     <input type="hidden" id="cat-ids" name="cat-ids" value="{{ $ids }}" />
                     <input type="hidden" id="cat-icons" name="cat-icons" value="{{ $icons }}" />
                 </div>
                 <div class="form-group">
+                    <label for="beng-input-services" class="col-sm-3 control-label">Services</label>
+                    <div id="beng-input-services" class="col-sm-6">
+                        @foreach($services as $key => $service)
+                            <div class="checkbox">
+                                <label><input class="input-service" type="checkbox" value="{{ $service['original']['id'] }}" > {{ $service['original']['name'] }} </label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="input-pictures" class="col-sm-3 control-label">Pictures</label>
                     <div class="col-sm-6">
-                        @if($action == 'create')
-                            <input type="text" class="form-control" id="input-pictures" placeholder="Pictures" value="">
-                        @else
-                            <input type="text" class="form-control" id="input-pictures" placeholder="Pictures" value="{{ $item[0]['original']['pictures'] }}">
-                        @endif
+                        <input type="text" class="form-control" id="input-pictures" placeholder="Pictures" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-description" class="col-sm-3 control-label">Description</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" name="description" id="input-description" placeholder="Some description..."></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="input-lat" class="col-sm-3 control-label">Lat</label>
                     <div class="col-sm-6">
-                        @if($action == 'create')
-                            <input type="text" class="form-control" id="input-lat" placeholder="Lat" value="">
-                        @else
-                            <input type="text" class="form-control" id="input-lat" placeholder="Lat" value="{{ $item[0]['original']['lat'] }}">
-                        @endif
+                        <input type="text" class="form-control" id="input-lat" placeholder="Lat" value="">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="input-lng" class="col-sm-3 control-label">Lng</label>
                     <div class="col-sm-6">
-                        @if($action == 'create')
-                            <input type="text" class="form-control" id="input-lng" placeholder="Lng" value="">
-                        @else
-                            <input type="text" class="form-control" id="input-lng" placeholder="Lng" value="{{ $item[0]['original']['lng'] }}">
-                        @endif
+                        <input type="text" class="form-control" id="input-lng" placeholder="Lng" value="">
                     </div>
                 </div>
             </form> 
@@ -132,13 +111,6 @@
         @endif
         
     </div>
-    <?php 
-        $columns = '';
-        foreach ($item[0]['original'] as $column => $value) {
-            if($column != 'id') $columns .= (($columns == "" ? '':',') . $column); 
-        }
-    ?>
-    <input type="hidden" id="columns" name="columns" value="{{ $columns }}">
 <script>
 $(document).ready(function() {
     if(!window.google||!window.google.maps){
@@ -180,30 +152,25 @@ $(document).ready(function() {
         $('#cat-icon-preview').attr('src', $('#cat-icons-dir').val() + '/' + $icon_list[$(this).val()]);
     });
 
-    if($('#cat-action').val() == 'create'){
-        $('#cat-icon-preview').attr('src', $('#cat-icons-dir').val() + '/' + $icon_list[$('#input-category').val()]);
-    }
-    else{
-        $('#input-category').val($('#cat-id').val());
-    }
-
     $('#beng-btn-save').click(function() {
-        if($('#cat-action').val() == 'create')
-            var my_url = url + '/create/0';
-        else
-            var my_url = url + '/edit/' + $('#text-id').val();
+        var add_services = [];
+        $('.input-service:checked').each(function() {
+            add_services.push($(this).val());
+        });
 
-        var formData            = {};
-        formData['_token']      = $('meta[name="_token"]').attr('content');
-        formData['name']        = $('#input-name').val();
-        formData['cat_id']      = $('#input-category').val();
-        formData['pictures']    = $('#input-pictures').val();
-        formData['lat']         = $('#input-lat').val();
-        formData['lng']         = $('#input-lng').val();
+        var formData                = {};
+        formData['_token']          = $('meta[name="_token"]').attr('content');
+        formData['name']            = $('#input-name').val();
+        formData['cat_id']          = $('#input-category').val();
+        formData['add_services']    = add_services;
+        formData['pictures']        = $('#input-pictures').val();
+        formData['description']     = $('#input-description').val();
+        formData['lat']             = $('#input-lat').val();
+        formData['lng']             = $('#input-lng').val();
 
         $.ajax({
             type: 'post',
-            url: my_url,
+            url: url + "/create/0",
             data: formData,
             dataType: 'json',
             success: function(data) {

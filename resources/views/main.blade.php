@@ -17,7 +17,9 @@
 		<!-- Scripts -->
 		<script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>
 		<script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
-
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2B1uaimZdVEjVqypYPunSj-ryVXGBcS4&callback=initMap">
+		</script>
 	</head>
 	<body>
 		<div id="sib-header-bar" class="col-md-12 col-sm-12 col-xs-12">
@@ -27,6 +29,7 @@
 				<span class="sib-sidebar-toggle-line"></span>
 			</a>
 			<img class="sib-header-brand" src="{{ URL::asset('images/bengkelke.png') }}" />
+			
 			<!-- Authentication Links -->
 			@if (Auth::guest())
 				<a href="{{ url('/login') }}">Login</a>
@@ -65,14 +68,24 @@
 				});
 				var icons = {
 					<?php 
-						$images = '';
-						foreach ($categories as $catId => $category) {
-							$alias = $category['original']['alias'];
-							$icon = $category['original']['icon'];
-							$images .= (($images==''?'':',') . $alias . ': ' . '\'' . URL::asset('images/icons/' . $icon) . '\'');
-						}
-						echo $images;
-					?>
+					$images = '';
+					foreach ($categories as $catId => $category): ?>
+						<?php
+						$alias = $category['original']['alias'];
+						$icon = $category['original']['icon']; 
+						echo $alias; ?>: {
+							url 	: '<?php echo URL::asset('images/icons/marker/' . $icon) ?>',
+							size 	: new google.maps.Size(32, 48),
+							origin 	: new google.maps.Point(0, 0),
+							anchor 	: new google.maps.Point(16, 48)
+						},
+					<?php endforeach; ?>
+					closed: {
+						url 	: '<?php echo URL::asset('images/icons/marker/closed.png') ?>',
+						size 	: new google.maps.Size(32, 48),
+						origin 	: new google.maps.Point(0, 0),
+						anchor 	: new google.maps.Point(16, 48)
+					}
 				}
 				var markers = new Array(<?php echo sizeof($bengkels); ?>);
 				function addMarker(data) {
@@ -85,31 +98,73 @@
 
 				function markerClick(marker) {
 					map.panTo(marker.getPosition());
-					// console.log(marker);
 				}
 
-				<?php
-					foreach ($bengkels as $bengkelId => $bengkel) {
-						echo 'var marker' . $bengkelId . " = {\n" . 
-							'id: ' . $bengkelId . ',' . "\n" . 
-							'location: {lat: ' . $bengkel['lat'] . ', lng: ' . $bengkel['lng'] . "},\n" . 
-							'icon: icons.' . $bengkel['alias'] . "\n" . 
-						'};' . "\n";
-					}
+				var serviceIco = [];
+				<?php foreach ($service_list as $key => $service) : ?>
+					serviceIco[<?php echo $service['id']; ?>] = '<?php echo $service['icon']; ?>';
+				<?php endforeach; ?>
 
-					foreach ($bengkels as $bengkelId => $bengkel) {
-						echo 'addMarker(marker' . $bengkelId . ');' . "\n";
+				var markerPopup = [];
+				var marker = [];
 
-						echo 'markers[' . $bengkelId . '].addListener(\'click\', function() {markerClick(markers[' . $bengkelId . '])});' . "\n";
-					}	
-				?>
-				google.maps.event.addListener(map, 'click', function( event ){
-					console.log( "Latitude: "+event.latLng.lat()+" "+", longitude: "+event.latLng.lng()); 
-				});
+				<?php foreach ($bengkels as $bengkelId => $bengkel): ?>
+					markerdata = {
+						id: <?php echo $bengkelId ?>,
+						location: {lat: <?php echo $bengkel['lat']?>, lng: <?php echo $bengkel['lng'] ?>},
+						icon: icons.<?php 
+							$start_hour = new DateTime($bengkel['start_hour']);
+							$end_hour = new DateTime($bengkel['end_hour']);
+							if ($start_hour->diff(new DateTime)->format('%R') == '-' || $end_hour->diff(new DateTime)->format('%R') == '+') {
+								echo 'closed';
+							}
+							else echo $bengkel['alias'];
+						?>
+					};
+
+					var serviceIcoUrl = '<?php echo URL::asset("images/icons"); ?>';
+					var servicesHtml = '';
+					<?php foreach ($bengkel['services'] as $key => $service): ?>
+						servicesHtml += (servicesHtml==''?'':'<br>') + '<img src="' + serviceIcoUrl + '/' + serviceIco[<?php echo $service->service_id; ?>] + '">';
+					<?php endforeach; ?>
+
+					var popupContent = '<div id="content">'+
+						'<div class="col-sm-12 text-center"><h3 id="firstHeading">'+ 	
+							<?php echo '\'' . $bengkel['name'] . '\''; ?> + 
+						'</h3></div>'+
+						'<div class="col-sm-6">' +
+							'<p>' + '<?php echo $bengkel['description']; ?>' + '</p>' +
+							'<br><p>Buka <br>' + '<?php echo $bengkel['start_hour'] . ' - ' . $bengkel['end_hour']; ?>' + '</p>' +
+						'</div>' +
+						'<div class="col-sm-6 text-right">' +
+							servicesHtml +
+						'</div>' +
+					'</div>';
+
+					markerPopup[<?php echo $bengkelId; ?>] = new google.maps.InfoWindow({
+						content: popupContent
+					});
+
+					addMarker(markerdata);
+
+					markers[<?php echo $bengkelId; ?>].addListener('click', function() {
+						markerPopup[<?php echo $bengkelId; ?>].open(map, this);
+						markerClick(markers[<?php echo $bengkelId; ?>]);
+					});
+
+					markers[<?php echo $bengkelId; ?>].addListener('mouseover', function() {
+						markerPopup[<?php echo $bengkelId; ?>].open(map, this);
+					});
+
+					markers[<?php echo $bengkelId; ?>].addListener('mouseout', function() {
+						markerPopup[<?php echo $bengkelId; ?>].close();
+					});
+				<?php endforeach; ?>
+				
+				// google.maps.event.addListener(map, 'click', function( event ){
+				// 	console.log( "Latitude: "+event.latLng.lat()+" "+", longitude: "+event.latLng.lng()); 
+				// });
 			}
-			</script>
-			<script async defer
-				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2B1uaimZdVEjVqypYPunSj-ryVXGBcS4&callback=initMap">
 			</script>
 		</div>
 		<div id="sib-sidebar" class="col-md-3 col-sm-4 col-xs-10"></div>

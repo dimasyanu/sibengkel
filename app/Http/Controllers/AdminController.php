@@ -42,6 +42,7 @@ class AdminController extends Controller {
 	public function getModelList() {
 		$models = array(
             'Category',
+            'Service',
             'Bengkel',
             'User'
         );
@@ -51,6 +52,7 @@ class AdminController extends Controller {
 	public function getTableList() {
 		$tables = array(
             'categories',
+            'services',
             'bengkels',
             'users'
         );

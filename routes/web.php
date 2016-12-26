@@ -35,4 +35,9 @@ Route::group(['middleware' => 'admin'], function() {
 	Route::post('admin/bengkel', 'BengkelController@index');
 	Route::get('admin/bengkel/{action}/{id}', 'BengkelController@crud');
 	Route::post('admin/bengkel/{action}/{id}', 'BengkelController@crud');
+
+	Route::get('admin/service', 'ServiceController@index');
+	Route::post('admin/service', 'ServiceController@index');
+	Route::get('admin/service/{action}/{id}', 'ServiceController@crud');
+	Route::post('admin/service/{action}/{id}', 'ServiceController@crud');
 });

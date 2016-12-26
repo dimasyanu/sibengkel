@@ -6,12 +6,12 @@
         <div class="col-sm-10">
             @if($menu == 'category' && $column == 'icon')
                 <?php
-                    $dir = 'images/icons';
+                    $dir = 'images/icons/marker';
                     chdir($dir);
                     foreach (glob('*.png') as $key => $icon):
                 ?>
                     <div class="col-sm-1 text-center pick-icon">
-                        <img src="{{ URL::asset('images/icons/' . $icon) }}" data-icon="{{ $icon }}" />
+                        <img src="{{ URL::asset('images/icons/marker/' . $icon) }}" data-icon="{{ $icon }}" />
                     </div>
                 <?php endforeach; ?>
             @else

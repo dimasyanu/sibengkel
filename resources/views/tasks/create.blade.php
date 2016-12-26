@@ -1,17 +1,17 @@
 <form id="modalForm" class="form-horizontal" name="modalForm">
-@foreach($column_list as $colKey => $column)
+@foreach($columns as $colKey => $column)
     @if($column != 'id')
     <div class="form-group">
         <label class="col-sm-2 control-label">{{ $column }}</label>
     	<div class="col-sm-10">
             @if($menu == 'category' && $column == 'icon')
                 <?php
-                    $dir = 'images/icons';
+                    $dir = 'images/icons/marker';
                     chdir($dir);
                     foreach (glob('*.png') as $key => $icon):
                 ?>
                     <div class="col-sm-1 text-center pick-icon">
-                        <img src="{{ URL::asset('images/icons/' . $icon) }}" data-icon="{{ $icon }}" />
+                        <img src="{{ URL::asset('images/icons/marker/' . $icon) }}" data-icon="{{ $icon }}" />
                     </div>
                 <?php endforeach; ?>
             @else
